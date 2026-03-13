@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('[Login API] Starting login request');
     const { username, password } = await request.json();
+    console.log('[Login API] Username:', username);
 
     if (!username || !password) {
       return NextResponse.json(
@@ -14,6 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Query user from database
+    console.log('[Login API] Querying database...');
     const user = await prisma.users.findFirst({
       where: {
         username: username,
@@ -27,6 +30,8 @@ export async function POST(request: NextRequest) {
         status: true,
       },
     });
+
+    console.log('[Login API] User found:', user ? 'Yes' : 'No');
 
     if (!user) {
       return NextResponse.json(
