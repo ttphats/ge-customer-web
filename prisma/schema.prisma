@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  id           Int            @id @default(autoincrement())
+  fullname     String         @db.VarChar(50)
+  dateofbirth  DateTime       @db.DateTime(0)
+  phone_number String         @db.VarChar(50)
+  address      String?        @db.VarChar(500)
+  gender       Int?           @db.TinyInt
+  created_date DateTime       @default(now()) @db.DateTime(0)
+  family_key   String?        @db.VarChar(45)
+
+  prescriptions        prescription[]
+  old_prescriptions    old_prescription[]
+  machine_prescriptions machine_prescription[]
+  family_members       family_members[]
+
+  @@index([id], map: "id")
+}
+
+model prescription {
+  id                 Int       @id @default(autoincrement())
+  examined_date      DateTime  @db.DateTime(0)
+  left_sphere        String?   @db.VarChar(50)
+  left_cylinder      String?   @db.VarChar(45)
+  left_axis          Int?
+  left_lk            String?   @db.VarChar(45)
+  left_addition      String?   @db.VarChar(45)
+  left_tl            String?   @db.VarChar(45)
+  left_pd            String?   @db.VarChar(45)
+  right_sphere       String?   @db.VarChar(45)
+  right_cylinder     String?   @db.VarChar(45)
+  right_axis         Int?
+  right_lk           String?   @db.VarChar(45)
+  right_addition     String?   @db.VarChar(45)
+  right_tl           String?   @db.VarChar(45)
+  right_pd           String?   @db.VarChar(45)
+  description        String?   @db.VarChar(500)
+  staff_name         String?   @db.VarChar(255)
+  customer_id        Int?
+  ref_key            String    @db.VarChar(50)
+  frame_name         String?   @db.VarChar(255)
+  frame_price        String?   @db.VarChar(255)
+  lense_name         String?   @db.VarChar(255)
+  lense_price        String?   @db.VarChar(255)
+  re_examinated_date DateTime? @db.DateTime(0)
+
+  customer customers? @relation(fields: [customer_id], references: [id], onDelete: Cascade, map: "prescription_ibfk_1")
+
+  @@index([customer_id], map: "customer_id")
+}
+
+model old_prescription {
+  id            Int      @id @default(autoincrement())
+  examined_date DateTime @db.DateTime(0)
+  left_sphere   String?  @db.VarChar(50)
+  left_cylinder String?  @db.VarChar(45)
+  left_axis     Int?
+  left_lk       String?  @db.VarChar(45)
+  left_addition String?  @db.VarChar(45)
+  left_tl       String?  @db.VarChar(45)
+  left_pd       String?  @db.VarChar(45)
+  right_sphere  String?  @db.VarChar(45)
+  right_cylinder String? @db.VarChar(45)
+  right_axis    Int?
+  right_lk      String?  @db.VarChar(45)
+  right_addition String? @db.VarChar(45)
+  right_tl      String?  @db.VarChar(45)
+  right_pd      String?  @db.VarChar(45)
+  description   String?  @db.VarChar(500)
+  staff_name    String?  @db.VarChar(255)
+  customer_id   Int?
+  ref_key       String?  @db.VarChar(50)
+
+  customer customers? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+
+  @@index([customer_id], map: "customer_id")
+}
+
+model machine_prescription {
+  id            Int      @id @default(autoincrement())
+  examined_date DateTime @db.DateTime(0)
+  left_sphere   String?  @db.VarChar(50)
+  left_cylinder String?  @db.VarChar(45)
+  left_axis     Int?
+  left_lk       String?  @db.VarChar(45)
+  left_addition String?  @db.VarChar(45)
+  left_tl       String?  @db.VarChar(45)
+  left_pd       String?  @db.VarChar(45)
+  right_sphere  String?  @db.VarChar(45)
+  right_cylinder String? @db.VarChar(45)
+  right_axis    Int?
+  right_lk      String?  @db.VarChar(45)
+  right_addition String? @db.VarChar(45)
+  right_tl      String?  @db.VarChar(45)
+  right_pd      String?  @db.VarChar(45)
+  description   String?  @db.VarChar(500)
+  staff_name    String?  @db.VarChar(255)
+  customer_id   Int?
+  ref_key       String?  @db.VarChar(50)
+
+  customer customers? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+
+  @@index([customer_id], map: "customer_id")
+}
+
+model family_members {
+  id           Int       @id @default(autoincrement())
+  fullname     String    @db.VarChar(50)
+  dateofbirth  DateTime? @db.DateTime(0)
+  phone_number String?   @db.VarChar(50)
+  address      String?   @db.VarChar(500)
+  gender       Int?      @db.TinyInt
+  role         String?   @db.VarChar(45)
+  customer_id  Int
+
+  customer customers @relation(fields: [customer_id], references: [id], map: "FK_FamilyMembers_Customers")
+
+  @@index([customer_id], map: "FK_FamilyMembers_Customers")
+  @@index([id], map: "id")
+}
+
+model users {
+  id       Int     @id @default(autoincrement()) @db.MediumInt
+  username String  @db.VarChar(255)
+  password String  @db.VarChar(255)
+  role     String? @db.VarChar(255)
+  status   Boolean @default(true)
+}
