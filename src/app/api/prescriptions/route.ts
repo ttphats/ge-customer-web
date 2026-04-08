@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+// Helper function to generate refKey matching WPF logic
+// Format: YYYYMMDD + count (e.g., "202601081", "202601082", etc.)
+async function generateRefKey(customerId: number): Promise<string> {
+  const now = new Date();
+
+  // Format date as YYYYMMDD (matching WPF: dateNow.Replace("/", ""))
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const dateString = `${year}${month}${day}`;
+
+  // Get start and end of today
+  const startOfDay = new Date(year, now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const endOfDay = new Date(year, now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+  // Count existing old_prescriptions for this customer today (matching WPF logic)
+  const existingCount = await prisma.old_prescription.count({
+    where: {
+      customer_id: customerId,
+      examined_date: {
+        gte: startOfDay,
+        lte: endOfDay,
+      }
+    }
+  });
+
+  // refKey = dateString + (count + 1)
+  const refKey = `${dateString}${existingCount + 1}`;
+
+  return refKey;
+}
+
 // POST: Create new prescription (all 3 types)
 export async function POST(request: NextRequest) {
   try {
@@ -20,9 +52,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate refKey
-    const refKey = `PRES${customerId}${Date.now()}`;
+    // Generate refKey matching WPF format: YYYYMMDD + count
+    const refKey = await generateRefKey(customerId);
     const examinedDate = new Date();
+
+    console.log("Generated refKey:", refKey);
 
     // Create all 3 prescriptions in a transaction
     await prisma.$transaction([

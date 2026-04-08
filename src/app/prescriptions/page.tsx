@@ -306,7 +306,7 @@ export default function PrescriptionsListPage() {
                 title="Hôm nay"
                 value={stats.today}
                 prefix={<CalendarOutlined />}
-                styles={{ value: { color: "#3f8600" } }}
+                valueStyle={{ color: "#3f8600" }}
               />
             </Card>
           </Col>
@@ -316,7 +316,7 @@ export default function PrescriptionsListPage() {
                 title="Tuần này"
                 value={stats.week}
                 prefix={<CalendarOutlined />}
-                styles={{ value: { color: "#1890ff" } }}
+                valueStyle={{ color: "#1890ff" }}
               />
             </Card>
           </Col>
@@ -326,7 +326,7 @@ export default function PrescriptionsListPage() {
                 title="Tháng này"
                 value={stats.month}
                 prefix={<CalendarOutlined />}
-                styles={{ value: { color: "#722ed1" } }}
+                valueStyle={{ color: "#722ed1" }}
               />
             </Card>
           </Col>
@@ -336,7 +336,7 @@ export default function PrescriptionsListPage() {
                 title="Tổng cộng"
                 value={stats.total}
                 prefix={<FileTextOutlined />}
-                styles={{ value: { color: "#cf1322" } }}
+                valueStyle={{ color: "#cf1322" }}
               />
             </Card>
           </Col>

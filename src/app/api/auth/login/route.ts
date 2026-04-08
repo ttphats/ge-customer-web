@@ -4,9 +4,7 @@ import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('[Login API] Starting login request');
     const { username, password } = await request.json();
-    console.log('[Login API] Username:', username);
 
     if (!username || !password) {
       return NextResponse.json(
@@ -71,14 +69,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Login error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      {
-        success: false,
-        message: "Có lỗi xảy ra, vui lòng thử lại",
-        error: process.env.NODE_ENV === "development" ? errorMessage : undefined,
-        debug: errorMessage // Tạm thời để debug
-      },
+      { success: false, message: "Có lỗi xảy ra, vui lòng thử lại" },
       { status: 500 }
     );
   }
