@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Helper function to generate refKey matching WPF logic
-// Format: YYYYMMDD + count (e.g., "202601081", "202601082", etc.)
+// Helper function to generate unique refKey
+// Format: YYYYMMDD-CustomerID-Count (e.g., "20260408-123-1", "20260408-123-2")
+// This format guarantees uniqueness: Date + CustomerID + Sequence
 async function generateRefKey(customerId: number): Promise<string> {
   const now = new Date();
 
-  // Format date as YYYYMMDD (matching WPF: dateNow.Replace("/", ""))
+  // Format date as YYYYMMDD
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
@@ -16,7 +17,7 @@ async function generateRefKey(customerId: number): Promise<string> {
   const startOfDay = new Date(year, now.getMonth(), now.getDate(), 0, 0, 0, 0);
   const endOfDay = new Date(year, now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-  // Count existing old_prescriptions for this customer today (matching WPF logic)
+  // Count existing old_prescriptions for this customer TODAY
   const existingCount = await prisma.old_prescription.count({
     where: {
       customer_id: customerId,
@@ -27,8 +28,9 @@ async function generateRefKey(customerId: number): Promise<string> {
     }
   });
 
-  // refKey = dateString + (count + 1)
-  const refKey = `${dateString}${existingCount + 1}`;
+  // RefKey format: YYYYMMDD-CustomerID-Count
+  // Example: 20260408-123-1
+  const refKey = `${dateString}-${customerId}-${existingCount + 1}`;
 
   return refKey;
 }
