@@ -1,0 +1,39 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.ge.customermanagement
+productName: GE Customer Management
+files:
+  - filter:
+      - .next/standalone/**/*
+      - .next/static/**/*
+      - public/**/*
+      - electron/**/*
+      - .env
+      - package.json
+extraResources:
+  - from: .next/static
+    to: .next/static
+  - from: public
+    to: public
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: public/favicon.ico
+  artifactName: ${productName}-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: GE Customer Management
+  installerIcon: public/favicon.ico
+  uninstallerIcon: public/favicon.ico
+  installerHeaderIcon: public/favicon.ico
+  deleteAppDataOnUninstall: false
+  runAfterFinish: true
+  license: LICENSE.txt
+publish: null
+electronVersion: 41.0.2

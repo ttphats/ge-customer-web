@@ -1,0 +1,9 @@
+GE CUSTOMER MANAGEMENT SYSTEM
+License Agreement
+
+Copyright (c) 2025 GE Customer Management
+
+This software is provided for use by authorized customers only.
+
+All rights reserved.
+

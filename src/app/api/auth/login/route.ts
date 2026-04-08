@@ -71,8 +71,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Login error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { success: false, message: "Có lỗi xảy ra, vui lòng thử lại" },
+      {
+        success: false,
+        message: "Có lỗi xảy ra, vui lòng thử lại",
+        error: process.env.NODE_ENV === "development" ? errorMessage : undefined,
+        debug: errorMessage // Tạm thời để debug
+      },
       { status: 500 }
     );
   }
